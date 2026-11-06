@@ -1,59 +1,69 @@
-<h2 class="text-center my-5">{{isEditing? 'Edit'  : 'Create'}} Employee</h2>
+<h2 class="text-center my-5">{{ isEditing ? 'Edit' : 'Create' }} Employee</h2>
 
-<div class="text-danger text-center" *ngIf="errorMessage != ''">
-    {{errorMessage}}
+<div class="alert alert-danger text-center mx-auto w-50" role="alert" *ngIf="errorMessage">
+    {{ errorMessage }}
 </div>
 
-<form *ngIf="errorMessage === ''" (ngSubmit)="onSubmit()" #employeeForm="ngForm" class="border rounded p-5 w-50 mb-5 mx-auto">
+<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" novalidate class="border rounded p-5 w-50 mb-5 mx-auto">
 
     <div class="mb-3">
-        <label class="form-label">First Name*</label>
-        <input required #firstName="ngModel" class="form-control" type="text" name="firstName" [(ngModel)]="employee.firstName"/>
-    
-        <div *ngIf="firstName.invalid && (firstName.touched || firstName.dirty)">
-            <div class="text-danger" *ngIf="firstName.errors?.['required']">First Name is required.</div>
-        </div>
-    
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Last Name*</label>
-        <input required #lastName="ngModel" class="form-control" type="text" name="lastName" [(ngModel)]="employee.lastName"/>
-    
-        <div *ngIf="lastName.invalid && (lastName.touched || lastName.dirty)">
-            <div class="text-danger" *ngIf="lastName.errors?.['required']">Last Name is required.</div>
-        </div>
-    
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Phone*</label>
-        <input required #phone="ngModel" class="form-control" type="phone" name="phone" [(ngModel)]="employee.phone"/>
-    
-        <div *ngIf="phone.invalid && (phone.touched || phone.dirty)">
-            <div class="text-danger" *ngIf="phone.errors?.['required']">Phone is required.</div>
-        </div>
-
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Email*</label>
-        <input required email #email="ngModel" class="form-control" type="email" name="email" [(ngModel)]="employee.email"/>
-    
-        <div *ngIf="email.invalid && (email.touched || email.dirty)">
-            <div class="text-danger" *ngIf="email.errors?.['required']">Email is required.</div>
-            <div class="text-danger" *ngIf="email.errors?.['email']">Email is invalid.</div>
+        <label class="form-label" for="firstName">First Name*</label>
+        <input id="firstName" class="form-control" type="text" formControlName="firstName"
+               [class.is-invalid]="isInvalid(firstName)" />
+        <div class="invalid-feedback" *ngIf="isInvalid(firstName)">
+            <div *ngIf="firstName.errors?.['required'] || firstName.errors?.['whitespace']">First Name is required.</div>
+            <div *ngIf="firstName.errors?.['maxlength']">First Name cannot exceed 100 characters.</div>
         </div>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Position*</label>
-        <input required #position="ngModel" class="form-control" type="text" name="position" [(ngModel)]="employee.position"/>
-    
-        <div *ngIf="position.invalid && (position.touched || position.dirty)">
-            <div class="text-danger" *ngIf="position.errors?.['required']">Position is required.</div>
+        <label class="form-label" for="lastName">Last Name*</label>
+        <input id="lastName" class="form-control" type="text" formControlName="lastName"
+               [class.is-invalid]="isInvalid(lastName)" />
+        <div class="invalid-feedback" *ngIf="isInvalid(lastName)">
+            <div *ngIf="lastName.errors?.['required'] || lastName.errors?.['whitespace']">Last Name is required.</div>
+            <div *ngIf="lastName.errors?.['maxlength']">Last Name cannot exceed 100 characters.</div>
         </div>
     </div>
 
-    <button class="btn btn-primary" type="submit" [disabled]="employeeForm.invalid">{{isEditing? 'Edit'  : 'Create'}}</button>
+    <div class="mb-3">
+        <label class="form-label" for="phone">Phone*</label>
+        <input id="phone" class="form-control" type="tel" formControlName="phone"
+               [class.is-invalid]="isInvalid(phone)" />
+        <div class="invalid-feedback" *ngIf="isInvalid(phone)">
+            <div *ngIf="phone.errors?.['required']">Phone is required.</div>
+            <div *ngIf="phone.errors?.['pattern']">Enter a valid phone number (7–20 digits, may include + - ( ) . and spaces).</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="email">Email*</label>
+        <input id="email" class="form-control" type="email" formControlName="email"
+               [class.is-invalid]="isInvalid(email)" />
+        <div class="invalid-feedback" *ngIf="isInvalid(email)">
+            <div *ngIf="email.errors?.['required']">Email is required.</div>
+            <div *ngIf="email.errors?.['email']">Email is invalid.</div>
+            <div *ngIf="email.errors?.['maxlength']">Email cannot exceed 254 characters.</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="position">Position*</label>
+        <input id="position" class="form-control" type="text" formControlName="position"
+               [class.is-invalid]="isInvalid(position)" />
+        <div class="invalid-feedback" *ngIf="isInvalid(position)">
+            <div *ngIf="position.errors?.['required'] || position.errors?.['whitespace']">Position is required.</div>
+            <div *ngIf="position.errors?.['maxlength']">Position cannot exceed 100 characters.</div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit" [disabled]="isSubmitting">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="isSubmitting" aria-hidden="true"></span>
+            {{ isEditing ? 'Save Changes' : 'Create' }}
+        </button>
+        <button class="btn btn-outline-secondary" type="button" (click)="onCancel()" [disabled]="isSubmitting">
+            Cancel
+        </button>
+    </div>
 </form>

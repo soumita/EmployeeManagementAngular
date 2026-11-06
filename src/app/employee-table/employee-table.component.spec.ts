@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { EmployeeTableComponent } from './employee-table.component';
 
@@ -8,9 +11,9 @@ describe('EmployeeTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmployeeTableComponent]
-    })
-    .compileComponents();
+      imports: [EmployeeTableComponent],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EmployeeTableComponent);
     component = fixture.componentInstance;
